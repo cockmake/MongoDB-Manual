@@ -2,6 +2,7 @@ from a_mongo import client
 
 db = client.t
 # 查询指定字段
+
 # for item in db.inventory.find(
 #         {},  # 条件
 #         {
@@ -13,6 +14,7 @@ db = client.t
 #     print(item)
 
 # 多条件查询
+
 # for item in db.inventory.find(
 #         # {"instock": {"warehouse": "A", "qty": 5}}
 #         # {"instock": {"qty": 5, "warehouse": "A"}},  # 不含有$elemMatch的查询 会有顺序要求 所以不会查询到
@@ -30,6 +32,7 @@ db = client.t
 #     print(item)
 
 # 数组查询
+
 # for item in db.inventory.find(
 #         # {"tags": ["red", "blank"]},  # 查询tags字段中包含red和blank的数组 出现顺序要一致
 #         # {"tags": {"$all": ["red", "blank"]}},  # 查询tags字段中包含red和blank的数组 顺序无要求
@@ -50,3 +53,14 @@ db = client.t
 #     print(item)
 
 # 查询空字段或缺少字段
+
+# for it in db.inventory.find(
+#         # {"item": None},  # 返回的是item字段为空或者不存在的
+#         # {"item": {"$type": 10}}  # 仅返回item字段值为空的文档 type: 10就是代表空值
+#
+#         # {"item": {"$not": {"$type": 10}}},  # 返回不包含item字段的文档
+#         # {"item": {"$exists": False}}  # 返回不包含item字段的文档
+# ):
+#     print(it)
+
+#
