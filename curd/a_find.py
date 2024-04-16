@@ -1,3 +1,5 @@
+import pymongo
+
 from a_mongo import client
 
 db = client.t
@@ -63,4 +65,21 @@ db = client.t
 # ):
 #     print(it)
 
-#
+# 执行文本搜索
+collection_name = "stores"
+# 首先要构建对某个字段的文本搜索索引
+
+# s = db[collection_name].create_index(
+#     {
+#         'name': 'text',
+#         'desc': 'text'
+#     }
+# )
+# print(s)
+
+for item in db[collection_name].find(
+        {'$text': {'$search': 'coffee shop'}},  # 所有包含coffee或shop的文档 不区分大小写
+        # {'$text': {'$search': 'java shop -coffee -hut'}},  # 包含java或shop但不包含coffee或hut的
+        {'score': {'$meta': 'textScore'}},  # 获取匹配相关系数
+).sort('score', -1):  # 按照某个字段排序
+    print(item)

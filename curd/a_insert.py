@@ -1,8 +1,10 @@
+import datetime
+
 from a_mongo import client
 
 db = client.t
-# 多条件查询
 
+# 多条件查询
 # db.inventory.insert_many([
 #     {"item": "journal", "status": "A", "size": {"h": 14, "w": 21, "uom": "cm"},
 #      "instock": [{"warehouse": "A", "qty": 5}]},
@@ -65,17 +67,63 @@ db = client.t
 #     ]
 # )
 
-# 管道聚合更新
+# 删除文档
 
-# db.students.insert_many(
+# db.inventory.insert_many(
 #     [
-#         {"_id": 1, "tests": {"yw": 90, "sx": 90, "yy": 90}, "modified": "2019-01-01T00:00:00Z"},
-#         {"_id": 2, "tests": {"yw": 85, "sx": 88, "yy": 90}, "modified": "2019-01-01T00:00:00Z"},
-#         {"_id": 3, "tests": {"yw": 88, "sx": 85, "yy": 90}, "modified": "2019-01-01T00:00:00Z"},
-#         {"_id": 4, "tests": {"yw": 87, "sx": 87, "yy": 90}, "modified": "2019-01-01T00:00:00Z"},
-#         {"_id": 5, "tests": {"yw": 86, "sx": 86, "yy": 90}, "modified": "2019-01-01T00:00:00Z"},
+#         {"item": "journal", "qty": 25, "size": {"h": 14, "w": 21, "uom": "cm"}, "status": "A"},
+#         {"item": "notebook", "qty": 50, "size": {"h": 8.5, "w": 11, "uom": "in"}, "status": "P"},
+#         {"item": "paper", "qty": 100, "size": {"h": 8.5, "w": 11, "uom": "in"}, "status": "D"},
+#         {"item": "planner", "qty": 75, "size": {"h": 22.85, "w": 30, "uom": "cm"}, "status": "D"},
+#         {"item": "postcard", "qty": 45, "size": {"h": 10, "w": 15.25, "uom": "cm"}, "status": "A"},
 #     ]
 # )
 
-for item in db.students.find():
-    print(item)
+
+# 批量插入文档bulk_write操作
+# collection_name = "pizzas"
+# db[collection_name].insert_many([
+#     {"_id": 0, "type": "pepperoni", "size": "small", "price": 4},
+#     {"_id": 1, "type": "cheese", "size": "medium", "price": 7},
+#     {"_id": 2, "type": "vegan", "size": "large", "price": 8}
+# ])
+
+
+# 执行文本搜索
+
+# collection_name = "stores"
+# db[collection_name].insert_many(
+#     [
+#         {'_id': 1, 'name': 'Java Hut', 'desc': 'Coffee and cakes'},
+#         {'_id': 2, 'name': 'Burger Buns', 'desc': 'Gourmet hamburgers'},
+#         {'_id': 3, 'name': 'Coffee Shop', 'desc': 'Just coffee'},
+#         {'_id': 4, 'name': 'Clothes Clothes Clothes', 'desc': 'Discount clothing'},
+#         {'_id': 5, 'name': 'Java Shopping', 'desc': 'Indonesian goods'}
+#     ]
+# )
+
+# 聚合操作
+# collection_name = "orders"
+# db[collection_name].insert_many(
+#     [
+#         {'_id': 0, 'name': 'Pepperoni', 'size': 'small', 'price': 19, 'quantity': 10,
+#          'date': datetime.datetime(2021, 3, 13, 8, 14, 30)},
+#         {'_id': 1, 'name': 'Pepperoni', 'size': 'medium', 'price': 20, 'quantity': 20,
+#          'date': datetime.datetime(2021, 3, 13, 9, 13, 24)},
+#         {'_id': 2, 'name': 'Pepperoni', 'size': 'large', 'price': 21, 'quantity': 30,
+#          'date': datetime.datetime(2021, 3, 17, 9, 22, 12)},
+#         {'_id': 3, 'name': 'Cheese', 'size': 'small', 'price': 12, 'quantity': 15,
+#          'date': datetime.datetime(2021, 3, 13, 11, 21, 39, 736000)},
+#         {'_id': 4, 'name': 'Cheese', 'size': 'medium', 'price': 13, 'quantity': 50,
+#          'date': datetime.datetime(2022, 1, 12, 21, 23, 13, 331000)},
+#         {'_id': 5, 'name': 'Cheese', 'size': 'large', 'price': 14, 'quantity': 10,
+#          'date': datetime.datetime(2022, 1, 12, 5, 8, 13)},
+#         {'_id': 6, 'name': 'Vegan', 'size': 'small', 'price': 17, 'quantity': 10,
+#          'date': datetime.datetime(2021, 1, 13, 5, 8, 13)},
+#         {'_id': 7, 'name': 'Vegan', 'size': 'medium', 'price': 18, 'quantity': 10,
+#          'date': datetime.datetime(2021, 1, 13, 5, 10, 13)}
+#     ]
+# )
+
+# for item in db[collection_name].find():
+#     print(item)

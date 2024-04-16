@@ -42,7 +42,6 @@ for item in db[collection_name].find(condition):
 # for item in db.inventory.find(condition):
 #     db.inventory.replace_one(item, operation)
 
-# 管道聚合更新
 
 
 print("更新文当后：")
