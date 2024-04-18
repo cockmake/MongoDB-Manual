@@ -1,5 +1,3 @@
-import datetime
-
 from a_mongo import client
 
 db = client.t
@@ -124,6 +122,61 @@ db = client.t
 #          'date': datetime.datetime(2021, 1, 13, 5, 10, 13)}
 #     ]
 # )
+
+# $set | $addFields | $project 字段
+# collection_name = "scores"
+# db[collection_name].insert_many(
+#     [
+#         {
+#             "_id": 1,
+#             "student": "Maya",
+#             "homework": [10, 5, 10],
+#             "quiz": [10, 8],
+#             "extraCredit": 0
+#         },
+#         {
+#             "_id": 2,
+#             "student": "Ryan",
+#             "homework": [5, 6, 5],
+#             "quiz": [8, 8],
+#             "extraCredit": 8
+#         }
+#     ]
+# )
+
+
+# $bucket 分组筛选
+# collection_name = "artists"
+# db.artists.insert_many([
+#     {"_id": 1, "last_name": "Bernard", "first_name": "Emil", "year_born": 1868, "year_died": 1941,
+#      "nationality": "France"},
+#     {"_id": 2, "last_name": "Rippl-Ronai", "first_name": "Joszef", "year_born": 1861, "year_died": 1927,
+#      "nationality": "Hungary"},
+#     {"_id": 3, "last_name": "Ostroumova", "first_name": "Anna", "year_born": 1871, "year_died": 1955,
+#      "nationality": "Russia"},
+#     {"_id": 4, "last_name": "Van Gogh", "first_name": "Vincent", "year_born": 1853, "year_died": 1890,
+#      "nationality": "Holland"},
+#     {"_id": 5, "last_name": "Maurer", "first_name": "Alfred", "year_born": 1868, "year_died": 1932,
+#      "nationality": "USA"},
+#     {"_id": 6, "last_name": "Munch", "first_name": "Edvard", "year_born": 1863, "year_died": 1944,
+#      "nationality": "Norway"},
+#     {"_id": 7, "last_name": "Redon", "first_name": "Odilon", "year_born": 1840, "year_died": 1916,
+#      "nationality": "France"},
+#     {"_id": 8, "last_name": "Diriks", "first_name": "Edvard", "year_born": 1855, "year_died": 1930,
+#      "nationality": "Norway"}
+# ])
+# $facet 多通道操作
+# collection_name = "artwork"
+# db[collection_name].insert_many([
+#     {"_id": 1, "title": "The Pillars of Society", "artist": "Grosz", "year": 1926, "price": 199.99},
+#     {"_id": 2, "title": "Melancholy III", "artist": "Munch", "year": 1902, "price": 280.00},
+#     {"_id": 3, "title": "Dancer", "artist": "Miro", "year": 1925, "price": 76.04},
+#     {"_id": 4, "title": "The Great Wave off Kanagawa", "artist": "Hokusai", "price": 167.30},
+#     {"_id": 5, "title": "The Persistence of Memory", "artist": "Dali", "year": 1931, "price": 483.00},
+#     {"_id": 6, "title": "Composition VII", "artist": "Kandinsky", "year": 1913, "price": 385.00},
+#     {"_id": 7, "title": "The Scream", "artist": "Munch", "year": 1893},
+#     {"_id": 8, "title": "Blue Flower", "artist": "O'Keefe", "year": 1918, "price": 118.42}
+# ])
 
 # for item in db[collection_name].find():
 #     print(item)
