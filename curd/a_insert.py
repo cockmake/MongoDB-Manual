@@ -1,5 +1,5 @@
 from a_mongo import client
-
+import datetime
 db = client.t
 
 # 多条件查询
@@ -178,5 +178,140 @@ db = client.t
 #     {"_id": 8, "title": "Blue Flower", "artist": "O'Keefe", "year": 1918, "price": 118.42}
 # ])
 
-# for item in db[collection_name].find():
-#     print(item)
+
+# $count对文档流结果进行统计
+# collection_name = "scores"
+
+# db[collection_name].insert_many(
+#     [
+#         {"_id": 1, "subject": "History", "score": 88},
+#         {"_id": 2, "subject": "History", "score": 92},
+#         {"_id": 3, "subject": "History", "score": 97},
+#         {"_id": 4, "subject": "History", "score": 71},
+#         {"_id": 5, "subject": "History", "score": 79},
+#         {"_id": 6, "subject": "History", "score": 83}
+#     ]
+# )
+
+# $fill 对缺少或null字段进行填充
+# 填充常量
+# collection_name = "dailySales"
+# db[collection_name].insert_many(
+#     [
+#         {
+#             "date": datetime.datetime.fromisoformat("2022-02-02"),
+#             "bootsSold": 10,
+#             "sandalsSold": 20,
+#             "sneakersSold": 12
+#         },
+#         {
+#             "date": datetime.datetime.fromisoformat("2022-02-03"),
+#             "bootsSold": 7,
+#             "sneakersSold": 18
+#         },
+#         {
+#             "date": datetime.datetime.fromisoformat("2022-02-04"),
+#             "sneakersSold": 5
+#         }
+#     ]
+# )
+# 线性填充
+# collection_name = "stock"
+# db[collection_name].insert_many(
+#     [
+#         {
+#             'time': datetime.datetime.fromisoformat("2021-03-08 09:00:00"),
+#             'price': 500
+#         },
+#         {
+#             'time': datetime.datetime.fromisoformat("2021-03-08 10:00:00"),
+#         },
+#         {
+#             'time': datetime.datetime.fromisoformat("2021-03-08 11:00:00"),
+#             'price': 515
+#         },
+#         {
+#             'time': datetime.datetime.fromisoformat("2021-03-08 12:00:00")
+#         },
+#         {
+#             'time': datetime.datetime.fromisoformat("2021-03-08 13:00:00")
+#         },
+#         {
+#             'time': datetime.datetime.fromisoformat("2021-03-08 14:00:00"),
+#             'price': 485
+#         }
+#     ]
+# )
+# 观察的上一个结果填充
+# collection_name = "restaurantReviews"
+# db[collection_name].insert_many(
+#     [
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-08"),
+#             'score': 90
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-09"),
+#             'score': 92
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-10")
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-11")
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-12"),
+#             'score': 85
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-13")
+#         }
+#     ]
+# )
+
+# 将所要填充的数据进行分区
+# collection_name = "restaurantReviewsMultiple"
+# db[collection_name].insert_many(
+#     [
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-08"),
+#             'restaurant': "Joe's Pizza",
+#             'score': 90
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-08"),
+#             'restaurant': "Sally's Deli",
+#             'score': 75
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-09"),
+#             'restaurant': "Joe's Pizza",
+#             'score': 92
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-09"),
+#             'restaurant': "Sally's Deli"
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-10"),
+#             'restaurant': "Joe's Pizza"
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-10"),
+#             'restaurant': "Sally's Deli",
+#             'score': 68
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-11"),
+#             'restaurant': "Joe's Pizza",
+#             'score': 93
+#         },
+#         {
+#             'date': datetime.datetime.fromisoformat("2021-03-11"),
+#             'restaurant': "Sally's Deli"
+#         }
+#     ]
+# )
+for item in db[collection_name].find():
+    print(item)
