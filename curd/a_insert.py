@@ -1,5 +1,7 @@
-from a_mongo import client
 import datetime
+
+from a_mongo import client
+
 db = client.t
 
 # 多条件查询
@@ -313,5 +315,109 @@ db = client.t
 #         }
 #     ]
 # )
-for item in db[collection_name].find():
-    print(item)
+
+# $lookup 连接查询
+# 等值连接
+# collection_name = "orders"
+# db[collection_name].insert_many([
+#     {"_id": 1, "item": "almonds", "price": 12, "quantity": 2},
+#     {"_id": 2, "item": "pecans", "price": 20, "quantity": 1},
+#     {"_id": 3}
+# ])
+# for item in db[collection_name].find():
+#     print(item)
+#
+# collection_name = "inventory"
+# db[collection_name].insert_many([
+#     {"_id": 1, "sku": "almonds", "description": "product 1", "instock": 120},
+#     {"_id": 2, "sku": "bread", "description": "product 2", "instock": 80},
+#     {"_id": 3, "sku": "cashews", "description": "product 3", "instock": 60},
+#     {"_id": 4, "sku": "pecans", "description": "product 4", "instock": 70},
+#     {"_id": 5, "sku": None, "description": "Incomplete"},
+#     {"_id": 6}
+# ])
+# 数组连接
+# collection_name = "classes"
+# db[collection_name].insert_many([
+#     {'_id': 1, 'title': "Reading is ...", 'enrollmentlist': ["giraffe2", "pandabear", "artie"],
+#      'days': ["M", "W", "F"]},
+#     {'_id': 2, 'title': "But Writing ...", 'enrollmentlist': ["giraffe1", "artie"], 'days': ["T", "F"]}
+# ])
+# for item in db[collection_name].find():
+#     print(item)
+# collection_name = "members"
+# db[collection_name].insert_many([
+#     {'_id': 1, 'name': "artie", 'joined': datetime(2016, 5, 1), 'status': "A"},
+#     {'_id': 2, 'name': "giraffe", 'joined': datetime(2017, 5, 1), 'status': "D"},
+#     {'_id': 3, 'name': "giraffe1", 'joined': datetime(2017, 10, 1), 'status': "A"},
+#     {'_id': 4, 'name': "panda", 'joined': datetime(2018, 10, 11), 'status': "A"},
+#     {'_id': 5, 'name': "pandabear", 'joined': datetime(2018, 12, 1), 'status': "A"},
+#     {'_id': 6, 'name': "giraffe2", 'joined': datetime(2018, 12, 1), 'status': "D"}
+# ])
+# for item in db[collection_name].find():
+#     print(item)
+
+# $lookup 与 $mergeObjects
+# $mergeObjects接受一个列表参数 返回值以列表中后出现的值为主
+
+# collection_name = "orders"
+# db[collection_name].insert_many([
+#     {"_id": 1, "item": "almonds", "price": 12, "quantity": 2},
+#     {"_id": 2, "item": "pecans", "price": 20, "quantity": 1}
+# ])
+# for item in db[collection_name].find():
+#     print(item)
+#
+# collection_name = "items"
+# db[collection_name].insert_many([
+#     {"_id": 1, "item": "almonds", 'description': "almond clusters", "instock": 120},
+#     {"_id": 2, "item": "bread", 'description': "raisin and nut bread", "instock": 80},
+#     {"_id": 3, "item": "pecans", 'description': "candied pecans", "instock": 60}
+# ])
+# for item in db[collection_name].find():
+#     print(item)
+
+# 简洁关联子查询案例
+# 1. 判断订单可以从哪个数量足够的仓库发货
+# collection_name = "orders"
+# db[collection_name].insert_many([
+#     {"_id": 1, "item": "almonds", "price": 12, "ordered": 2},
+#     {"_id": 2, "item": "pecans", "price": 20, "ordered": 1},
+#     {"_id": 3, "item": "cookies", "price": 10, "ordered": 60}
+# ])
+# for item in db[collection_name].find():
+#     print(item)
+#
+# collection_name = "warehouses"
+# db[collection_name].insert_many([
+#     {"_id": 1, "stock_item": "almonds", 'warehouse': "A", "instock": 120},
+#     {"_id": 2, "stock_item": "pecans", 'warehouse': "A", "instock": 80},
+#     {"_id": 3, "stock_item": "almonds", 'warehouse': "B", "instock": 60},
+#     {"_id": 4, "stock_item": "cookies", 'warehouse': "B", "instock": 40},
+#     {"_id": 5, "stock_item": "cookies", 'warehouse': "A", "instock": 80}
+# ])
+# for item in db[collection_name].find():
+#     print(item)
+
+
+# 2. 获取员工请假日所在年份的所有节假日
+# collection_name = "absences"
+# db[collection_name].insert_many([
+#     {"_id": 1, "student": "Ann Aardvark", 'sickdays': [datetime.datetime.fromisoformat("2018-05-01"),
+#                                                        datetime.datetime.fromisoformat("2018-08-23")]},
+#     {"_id": 2, "student": "Zoe Zebra", 'sickdays': [datetime.datetime.fromisoformat("2018-02-01"),
+#                                                     datetime.datetime.fromisoformat("2018-05-23")]},
+# ])
+# for item in db[collection_name].find():
+#     print(item)
+#
+# collection_name = "holidays"
+# db[collection_name].insert_many([
+#     {"_id": 1, "year": 2018, "name": "New Years", "date": datetime.datetime.fromisoformat("2018-01-01")},
+#     {"_id": 2, "year": 2018, "name": "Pi Day", "date": datetime.datetime.fromisoformat("2018-03-14")},
+#     {"_id": 3, "year": 2018, "name": "Ice Cream Day", "date": datetime.datetime.fromisoformat("2018-07-15")},
+#     {"_id": 4, "year": 2017, "name": "New Years", "date": datetime.datetime.fromisoformat("2017-01-01")},
+#     {"_id": 5, "year": 2017, "name": "Ice Cream Day", "date": datetime.datetime.fromisoformat("2017-07-16")}
+# ])
+# for item in db[collection_name].find():
+#     print(item)

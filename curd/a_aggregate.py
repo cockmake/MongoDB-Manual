@@ -192,22 +192,22 @@ db = client.t
 #     }
 # ]
 # 5.4 将数据进行分区然后再执行填充方法
-collection_name = "restaurantReviewsMultiple"
-pipeline = [
-    {
-        '$fill': {
-            'sortBy': {'date': 1},
-            'partitionBy': {'restaurant': "$restaurant"},  # 根据表达式结果分组
-            # 'partitionByFields': ['restaurant'],  # 根据字段来分组
-            'output': {
-                'score': {'method': 'locf'}
-                # locf在上一个为空的时候当前这个值也会为空
-                # linear在只有一个值的时候无法进行插值计算
-
-            }
-        }
-    }
-]
+# collection_name = "restaurantReviewsMultiple"
+# pipeline = [
+#     {
+#         '$fill': {
+#             'sortBy': {'date': 1},
+#             'partitionBy': {'restaurant': "$restaurant"},  # 根据表达式结果分组
+#             # 'partitionByFields': ['restaurant'],  # 根据字段来分组
+#             'output': {
+#                 'score': {'method': 'locf'}
+#                 # locf在上一个为空的时候当前这个值也会为空
+#                 # linear在只有一个值的时候无法进行插值计算
+#
+#             }
+#         }
+#     }
+# ]
 # 5.5区分是插入值还是原始值
 # 可以在$fill操作之前使用$set为文档添加额外的字段
 # collection_name = "restaurantReviews"
@@ -228,6 +228,149 @@ pipeline = [
 #         }
 #     }
 # ]
+# 6.$lookup 连接查询
+# 等值连接
+# collection_name = "orders"
+# pipeline = [
+#     {
+#         '$match': {
+#             'item': {'$ne': None},  # localField字段建议要存在否则所有不存在的对应字段会聚集
+#         }
+#     },
+#     {
+#         '$lookup': {
+#             'from': 'inventory',
+#             'localField': 'item',
+#             'foreignField': 'sku',
+#             'as': 'inventory_docs'
+#         }
+#     }
+# ]
+# 数组连接 满足数组中其中一个即可
+# collection_name = "classes"
+# pipeline = [
+#     {
+#         '$lookup': {
+#             'from': 'members',
+#             'localField': 'enrollmentlist',
+#             'foreignField': 'name',
+#             'as': 'enroll_info'
+#         }
+#     }
+# ]
+
+# $lookup 与 $mergeObjects
+# $mergeObjects接受一个列表参数 返回值以列表中后出现的值为主
+# collection_name = "orders"
+# pipeline = [
+#     {
+#         '$lookup': {
+#             'from': 'items',
+#             'localField': 'item',
+#             'foreignField': 'item',
+#             'as': 'fromItems'
+#         }
+#     },
+#     {
+#         '$replaceRoot': {
+#             'newRoot': {
+#                 '$mergeObjects': [
+#                     # $mergeObjects操作重复出现的值以后出现的值为主，列表中的值需要都为Object
+#                     {
+#                         '$arrayElemAt': ['$fromItems', 0]
+#                     },
+#                     '$$ROOT',  # $$ROOT就是把该层文档值取出的意思
+#                 ]
+#                 # 该操作是把formItem中的参数去除放在上层 存在的重复字段就和并
+#             }
+#         }
+#     },
+#     {
+#         '$project': {
+#             'fromItem': 0,  # 由于fromItem的值已经拿到上层来了，所以这里就不需要fromItem的值了
+#         }
+#     }
+# ]
+# result = db[collection_name].aggregate(pipeline)
+# for item in result:
+#     print(item)
+
+# 简洁关联子查询案例
+# 1. 判断订单可以从哪个数量足够的仓库发货
+# collection_name = "orders"
+# pipeline = [
+#     {
+#         '$lookup': {
+#             # 阶段一
+#             'localField': 'item',
+#             'from': 'warehouses',
+#             'foreignField': 'stock_item',
+#             'as': 'abc',
+#             # 阶段二是对as声明的字段进行操作
+#             'let': {'order_count': '$ordered'},
+#             'pipeline': [
+#                 # pipeline中访问从表正常$即可
+#                 # 访问其他值需要再外部计算且需要$$
+#                 {
+#                     '$match': {
+#                         '$expr': {
+#                             '$gte': ['$instock', '$$order_count']
+#                         }
+#                     }
+#                 },
+#                 {
+#                     '$sort': {
+#                         'instock': -1
+#                     }
+#                 }
+#             ],
+#         }
+#     },
+#     {
+#         '$project': {
+#             'item': 1,
+#             'abc': 1
+#         }
+#     }
+# ]
+# 2. 获取员工请假日所在年份的所有节假日
+# 不需要等值匹配的n*m相连
+collection_name = "absences"
+pipeline = [
+    {
+        '$lookup': {
+            'from': 'holidays',
+            'as': 'holidays',
+            'let': {
+                'year':
+                    {'$year': {'$arrayElemAt': ['$sickdays', 0]}}
+            },
+            'pipeline': [
+                # pipeline对m个数据进行筛选
+                {
+                    '$match': {
+                        # $match中如果$expr聚合操作返回true则
+                        # 代表这个document可以被添加入as代表的字段中
+                        '$expr': {
+                            '$eq': ['$year', '$$year']
+                        }
+                    },
+                },
+                {
+                    '$project': {
+                        '_id': 0,
+                        'name': 1,
+                        'date': 1,
+                    }
+                },
+                {
+                    # 替换as字段的顶层 dict[as]的所有字段
+                    '$replaceRoot': {'newRoot': '$$ROOT'}
+                }
+            ]
+        }
+    }
+]
 result = db[collection_name].aggregate(pipeline)
 for item in result:
     print(item)
