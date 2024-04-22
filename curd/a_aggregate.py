@@ -313,7 +313,8 @@ db = client.t
 #                 # 访问其他值需要再外部计算且需要$$
 #                 {
 #                     '$match': {
-#                         '$expr': {
+#                         # $match需要的是一个bool值，用于判定该条结合是否可以加入结果集
+#                        '$expr': {
 #                             '$gte': ['$instock', '$$order_count']
 #                         }
 #                     }
