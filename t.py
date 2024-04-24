@@ -1,4 +1,3 @@
-import datetime
-
-date = datetime.date.fromisoformat("2022-02-02")
-print(date)
+import torch
+t = torch.randn((3, 4, 4))
+print(t[None].shape)
