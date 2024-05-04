@@ -1,3 +1,5 @@
+import datetime
+
 from a_mongo import client
 
 # 7. merge 聚合
@@ -147,3 +149,119 @@ from a_mongo import client
 #     print(item)
 
 # 方法二：使用lookup
+# db_name = 't'
+# db = client[db_name]
+# collection_name = 'purchaseorders'
+# pipeline = [
+#     {
+#         '$lookup': {
+#             'from': 'reportedsales',
+#             'let': {
+#                 'a_quarter': '$quarter',
+#                 'a_region': '$region',
+#                 'a_purchase': '$qty'
+#             },
+#             'as': 'purchased_sales',
+#             'pipeline': [
+#                 {
+#                     '$match': {
+#                         '$expr': {
+#                             '$and': [
+#                                 {'$eq': ['$quarter', '$$a_quarter']},
+#                                 {'$eq': ['$region', '$$a_region']}
+#                             ]
+#                         }
+#                     }
+#                 },
+#                 {
+#                     # $replaceWith和$replaceRoot的区别就是replaceRoot需要newRoot参数
+#                     '$replaceWith': {
+#                         'sales_qty': '$qty'
+#                     }
+#                 }
+#             ]
+#         }
+#     },
+#     {
+#         '$set': {
+#             'sales_qty': {
+#                 '$ifNull': [
+#                     {
+#                         '$arrayElemAt': ['$purchased_sales', 0]
+#                     },
+#                     {
+#                         'sales_qty': 0
+#                     }
+#                 ]
+#             },
+#         }
+#     },
+#     {
+#         '$set': {
+#             'sales_qty': '$sales_qty.sales_qty'
+#         }
+#     },
+#     {
+#         '$group': {
+#             '_id': '$quarter',
+#             'purchased_qty': {'$sum': '$qty'},
+#             'sales_qty': {'$sum': '$sales_qty'}
+#         }
+#     },
+#     {
+#         '$merge': {
+#             'into': 'quarterlyreport',
+#             'on': '_id',
+#             'whenMatched': 'replace',  # 不存在的会添加字段，存在的字段会被替代
+#             'whenNotMatched': 'insert'
+#         }
+#     }
+# ]
+
+# 4. 使用自定义管道和自定义变量进行合并
+# db_name = 't'
+# db = client[db_name]
+# collection_name = 'votes'
+# pipeline = [
+#     {
+#         '$match': {
+#             'date': datetime.datetime.fromisoformat("2019-05-06"),
+#             # '$expr': {
+#             #     '$eq': ['$date', datetime.datetime.fromisoformat("2019-05-06")]
+#             # }
+#         }
+#     },
+#     {
+#         '$project': {
+#             '_id': {'$dateToString': {'format': "%Y-%m", 'date': "$date"}},
+#             'thumbsup': 1,
+#             'thumbsdown': 1
+#         }
+#     },
+#     {
+#         '$merge': {
+#             'into': 'monthlytotals',
+#             'on': '_id',
+#             # 和lookup一样let操作的是主表的变量
+#             # 管道中要获取定义的变量需要使用$$
+#             'let': {
+#                 'lastUpdate': datetime.datetime.now()
+#             },
+#             # 管道操作以从表为主
+#             # whenMatched和whenMatched支持一个管道操作
+#             # $$new可以获取新插入的值
+#             'whenMatched': [
+#                 {
+#                     '$set': {
+#                         'thumbsup': {'$add': ['$thumbsup', '$$new.thumbsup']},
+#                         'thumbsdown': {'$add': ['$thumbsdown', '$$new.thumbsdown']},
+#                         'lastUpdate': '$$lastUpdate'
+#                     }
+#                 }
+#             ],
+#             'whenNotMatched': 'insert'
+#         }
+#     }
+# ]
+for item in db[collection_name].aggregate(pipeline):
+    print(item)

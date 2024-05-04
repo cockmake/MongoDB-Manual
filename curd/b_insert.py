@@ -76,5 +76,22 @@ from datetime import datetime
 #     {"_id": 3, "quarter": "2019Q1", "region": "C", "qty": 1000, "reportDate": datetime.fromisoformat("2019-04-05")},
 #     {"_id": 4, "quarter": "2019Q2", "region": "B", "qty": 500, "reportDate": datetime.fromisoformat("2019-07-02")},
 # ])
-for item in db[collection_name].find():
-    print(item)
+
+# 4. 使用自定义管道和自定义变量进行合并
+# db_name = 't'
+# db = client[db_name]
+# collection_name = 'votes'
+# db[collection_name].insert_many([
+#     {"date": datetime.fromisoformat("2019-05-01"), "thumbsup": 1, "thumbsdown": 1},
+#     {"date": datetime.fromisoformat("2019-05-02"), "thumbsup": 3, "thumbsdown": 1},
+#     {"date": datetime.fromisoformat("2019-05-03"), "thumbsup": 1, "thumbsdown": 1},
+#     {"date": datetime.fromisoformat("2019-05-04"), "thumbsup": 2, "thumbsdown": 2},
+#     {"date": datetime.fromisoformat("2019-05-05"), "thumbsup": 6, "thumbsdown": 10},
+#     {"date": datetime.fromisoformat("2019-05-06"), "thumbsup": 13, "thumbsdown": 16}
+# ])
+# collection_name = 'monthlytotals'
+# db[collection_name].insert_one(
+#     {"_id": "2019-05", "thumbsup": 0, "thumbsdown": 0}
+# )
+# for item in db[collection_name].find():
+#     print(item)

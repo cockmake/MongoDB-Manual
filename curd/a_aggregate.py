@@ -306,7 +306,7 @@ db = client.t
 #             'from': 'warehouses',
 #             'foreignField': 'stock_item',
 #             'as': 'abc',
-#             # 阶段二是对as声明的字段进行操作
+#             # 阶段二let是从主表中取值，pipeline中的数据是以从表为基础的
 #             'let': {'order_count': '$ordered'},
 #             'pipeline': [
 #                 # pipeline中访问从表正常$即可
