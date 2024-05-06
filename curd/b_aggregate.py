@@ -1,5 +1,3 @@
-import datetime
-
 from a_mongo import client
 
 # 7. merge 聚合
@@ -262,6 +260,69 @@ from a_mongo import client
 #             'whenNotMatched': 'insert'
 #         }
 #     }
+# ]
+
+# 8. redact 聚合
+# 1.
+# $DESCEND 继续检查嵌入式文档
+# $PRUNE 停止继续检查嵌入式文档
+# $KEEP 停止继续检查嵌入式文档
+# DESCEND + KEEP的任意组合都无效
+db_name = 't'
+db = client[db_name]
+collection_name = 'forecasts'
+user_access = ['STLW', 'G']
+pipeline = [
+    {
+        '$match': {
+            'year': 2014
+        }
+    },
+    {
+        '$redact': {
+            '$cond': {
+                'if': {
+                    '$and': [
+                        {
+                            '$ifNull': ['$tags', False]
+                        },
+                        {
+                            '$gte': [
+                                {'$size': {'$setIntersection': ['$tags', user_access]}},
+                                1
+                            ]
+                        }
+                    ],
+
+                },
+                'then': '$$DESCEND',
+                'else': '$$PRUNE'
+            }
+        }
+    }
+]
+# 2.
+# db_name = 't'
+# db = client[db_name]
+# collection_name = 'accounts'
+# pipeline = [
+#     {
+#         '$match': {
+#             'status': 'A'
+#         }
+#     },
+#     {
+#         '$redact': {
+#             '$cond': {
+#                 'if': {
+#                     '$eq': ['$level', 5]
+#                 },
+#                 'then': '$$PRUNE',
+#                 'else': '$$DESCEND'
+#             }
+#         }
+#     }
+#
 # ]
 for item in db[collection_name].aggregate(pipeline):
     print(item)
